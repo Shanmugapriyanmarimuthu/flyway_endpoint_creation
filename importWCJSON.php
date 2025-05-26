@@ -89,9 +89,9 @@ function importJSON($cnt) {
         
         $start = $i;
         $max = 1000;
-        $url = 'https://dev1.vogue.in/test/WW_VC_details.php?type='.$cat_type.'&cat_id='.$_GET['cat_id'].'&per_page='.$max.'&page='.$start;
+        $url = 'https://dev1.vogue.in/test/VC_details.php?type='.$cat_type.'&cat_id='.$_GET['cat_id'].'&per_page='.$max.'&page='.$start;
 
-        $url = 'https://dev1.vogue.in/test/WW_VC_details.php?type='.$cat_type.'&cat_id='.$_GET['cat_id'].'&ID=1064560,1069814,1072482,1073994,1075564,1075813,1076943,1078527,1078671,1093591,1101723';
+        // $url = 'https://dev1.vogue.in/test/WW_VC_details.php?type='.$cat_type.'&cat_id='.$_GET['cat_id'].'&ID=1175216';
 
         // 1099380
 
@@ -102,7 +102,7 @@ function importJSON($cnt) {
             if($retry_count < 3){
                 echo 'breaking count is : '.$i.';retry_count is : '.$retry_count.'</br>';
                 $retry_count = $retry_count + 1;
-                sleep(5);
+                sleep(2);
                 importJSON($i);
                 exit;
             }else{
@@ -230,3 +230,6 @@ if(isset($_GET['frompage']) && $_GET['frompage'] != '' && $_GET['frompage'] > 0 
     $frompage = $_GET['frompage'] ;
 }
 $result = importJSON($frompage);
+
+
+exit;

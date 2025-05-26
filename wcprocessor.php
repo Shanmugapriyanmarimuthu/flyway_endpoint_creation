@@ -197,7 +197,7 @@ class Processor {
                  }
                 $id_name = $this->current_id.'-'.$key;
                 if (preg_match('/\.webp($|\?)/i', $final_url)) {
-                    $final_url = "https://dev1.vogue.in/JSON_FILES/WW_WEBP_IMAGES/".basename($final_url).".jpg";
+                    $final_url = "https://archiviodev.vogue.it/vc/prod-mg/img/".pathinfo($final_url, PATHINFO_FILENAME).".jpg";
                   }
                 $path = pathinfo($final_url);
                 $encodedFilename = rawurlencode(urldecode($path['basename'])); 
@@ -221,39 +221,47 @@ class Processor {
     protected function getCategories() {
         // categories
         $result = [];        
-        if($_GET['cat_id'] == 18664) {
-            $slug_name = 'horoscope';
-            $tag_name = 'Horoscope';
-        }
+        // if($_GET['cat_id'] == 18664) {
+        //     $slug_name = 'horoscope';
+        //     $tag_name = 'Horoscope';
+        // }
+        // if($_GET['cat_id'] == 60944) {
+        //     $slug_name = 'vogue-closet';
+        //     $tag_name = 'Vogue Closet';
+        // }
+        // if($_GET['cat_id'] == 60945) {
+        //     $slug_name = 'weddings';
+        //     $tag_name = 'Weddings';
+        // }
+        // if($_GET['type']=='product_col') {
+        //     $result['sections'][] = [
+        //         'type' => 'category',
+        //         'slug' => "bridal-looks",
+        //         'name' => "Bridal Looks",
+        //         'parent' => [
+        //             'type' => 'category',
+        //             'slug' => $slug_name,
+        //             'name' => $tag_name
+        //         ]
+        //     ];
+        // }else if($_GET['type'] == 'product') {
+        //     $result['sections'][] = [
+        //         'type' => 'category',
+        //         'slug' => "bridal-looks",
+        //         'name' => "Bridal Looks",
+        //         'parent' => [
+        //             'type' => 'category',
+        //             'slug' => $slug_name,
+        //             'name' => $tag_name
+        //         ]
+        //     ];
+        // }
+
         if($_GET['cat_id'] == 60944) {
-            $slug_name = 'vogue-closet';
-            $tag_name = 'Vogue Closet';
-        }
-        if($_GET['cat_id'] == 60945) {
-            $slug_name = 'weddings';
-            $tag_name = 'Weddings';
-        }
-        if($_GET['type']=='product_col') {
             $result['sections'][] = [
                 'type' => 'category',
-                'slug' => "bridal-looks",
-                'name' => "Bridal Looks",
-                'parent' => [
-                    'type' => 'category',
-                    'slug' => $slug_name,
-                    'name' => $tag_name
-                ]
-            ];
-        }else if($_GET['type'] == 'product') {
-            $result['sections'][] = [
-                'type' => 'category',
-                'slug' => "bridal-looks",
-                'name' => "Bridal Looks",
-                'parent' => [
-                    'type' => 'category',
-                    'slug' => $slug_name,
-                    'name' => $tag_name
-                ]
+                'slug' => "fashion",
+                'name' => "Fashion"
             ];
         }
              
@@ -351,7 +359,7 @@ class Processor {
     }
 
     protected function convert($content,$type = '') {
-
+//  $div_insta = false;
         $content = '<root>'.$content.'</root>';
 
         $tidy = new tidy();
@@ -560,9 +568,17 @@ class Processor {
                         
                         
                     case 'BR':
+                        $br_value = $node['value'];
+                        
                         $text = $this->converter->convert("<br>");
                         $result .= "
                         ";
+                        if(strlen(trim($br_value)) != 0){
+                            $text = $this->converter->convert(filterRubbish($node['value']));
+                            $result .= "
+                            ".$text."
+                            ";
+                        }
                         break;
                     case 'A':
 
@@ -649,6 +665,7 @@ class Processor {
                                 $result .= '
                                 '.$text.'
                                 ';
+                                // $div_insta = true;
                             }else if (strpos($node['value'], 'instagram.com') !== false && count(explode(' ',trim($node['value']))) > 1) {
                                 
                                 $pattern = '/https?:\/\/(www\.)?instagram\.com\/[^\s]+/i';
@@ -658,6 +675,7 @@ class Processor {
                                 $result .= '
                                 '.$text.'
                                 ';
+                                // $div_insta = true;
                             }else if(strpos($node['value'], 'youtube.com') !== false){
                                
                             // Regular expression to match YouTube URLs
@@ -933,7 +951,9 @@ class Processor {
                 }
             }
         }
-
+// if($div_insta == true){
+//     print_r(" <div> Break tag had values that Article ID is : ". $this->record['id']."<div> <br>");
+// }
         $result = preg_replace('/[ \t]+/', ' ', $result);
         $result = preg_replace("/\n{3,}/", "\n\n", $result);
         $result = preg_replace('/\s+(\.|,)/', '$1', $result);
